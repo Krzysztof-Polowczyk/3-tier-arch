@@ -9,7 +9,7 @@ App = Flask(__name__)
 
 
 @App.get("/users/<int:id>")
-def get_via_id(id, repo=persitance(
+def get_via_id(id:int, repo=persitance(
     {
             1:{
             "firstName":"alex",
@@ -31,11 +31,12 @@ def get_via_id(id, repo=persitance(
             },
         })) -> ResponseValue:
     controller = controlers(repo)
+    try:
+        out = controller.get(id)
+        return out, 200
+    except ValueError:
+        return {}, 404
 
-    out = controller.get(id)
-    if isinstance(out, ValueError): return {}, 422
-    if out: return out, 200
-    return {}, 404
 
 @App.get("/users")
 def get_all(repo=persitance(
@@ -92,12 +93,17 @@ def add(repo=persitance(
     ,inner_request = request) -> ResponseValue:
     
     controller = controlers(repo)
-    controller.put(inner_request)
+    try:
+        controller.put(inner_request.json)
+        return Response(status=200)
+    except ZeroDivisionError:
+        return Response(status=422)
 
-    return Response(status=200)
+    
+
 
 @App.patch("/users/<int:id>")
-def patch_endpoint(id ,repo=persitance(
+def patch_endpoint(id:int ,repo=persitance(
     {
             1:{
             "firstName":"alex",
@@ -121,13 +127,19 @@ def patch_endpoint(id ,repo=persitance(
     ,inner_request = request) -> ResponseValue:
     
     controller = controlers(repo)
-    controller.patch(id ,inner_request.json)
+    try:
+        controller.patch(id ,inner_request.json)
+        return Response(status=200)
+    except ZeroDivisionError:
+        return Response(status=422)
+    except ValueError:
+        Response(status=404)
 
-    return Response(status=200)
+
 
 
 @App.delete("/users/<int:id>")
-def delete_endpoint(id ,repo=persitance(
+def delete_endpoint(id:int ,repo=persitance(
     {
             1:{
             "firstName":"alex",
@@ -151,7 +163,10 @@ def delete_endpoint(id ,repo=persitance(
     ,inner_request = request) -> ResponseValue:
     
     controller = controlers(repo)
-    controller.dellete(id)
+    try:
+        controller.dellete(id)
+        return Response(status=200)
+    except ValueError:
+        return Response(status=404)
 
-    return Response(status=200)
 

@@ -76,6 +76,8 @@ def test_user_get_all_responce_code(client, config):
 @pytest.mark.parametrize("config",
                             [
         [{"firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "admin"}, 200],
+        [{"ssd":"dd","firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "admin"}, 422],
+        [{"firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "kkk"}, 422],
                             ]
                         )
 def test_user_add_responce_code(client, config):
@@ -84,6 +86,8 @@ def test_user_add_responce_code(client, config):
 @pytest.mark.parametrize("config",
                             [
         [{"firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "admin"}, 200, 1],
+        [{"firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "kk"}, 422, 1],
+        [{"firstName":"alexxxx", "lastName":"zizka", "birthYear": 45, "group": "admin", "dd":33}, 422, 1],
                             ]
                         )
 def test_user_patch_responce_code(client, config):
@@ -92,6 +96,7 @@ def test_user_patch_responce_code(client, config):
 @pytest.mark.parametrize("config",
                             [
         [ 200, 1],
+        [ 404, 50],
                             ]
                         )
 def test_user_delete_responce_code(client, config):
